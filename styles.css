@@ -1,16 +1,16 @@
 .kodann-theme-widget {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: 18px;
+    bottom: 18px;
     z-index: var(--layer-popover, 1000);
-    width: 250px;
-    height: 210px;
+    width: 140px;
+    height: 140px;
     pointer-events: none;
 }
 
 .kodann-utility-widget {
     right: auto;
-    left: 20px;
+    left: 18px;
 }
 
 .kodann-theme-widget button,
@@ -22,26 +22,28 @@
 .kodann-theme-widget-toggle,
 .kodann-theme-widget-action,
 .kodann-theme-widget-theme-picker {
+    position: absolute;
+    display: grid;
+    place-items: center;
+    padding: 0;
     border: 1px solid var(--background-modifier-border);
-    background: color-mix(in srgb, var(--background-secondary) 88%, transparent);
+    border-radius: 50%;
+    background: var(--background-secondary);
     box-shadow: var(--shadow-s);
     color: var(--text-normal);
+    pointer-events: auto;
+    transition: transform 140ms ease, background-color 140ms ease;
 }
 
 .kodann-theme-widget-toggle {
-    position: absolute;
-    bottom: 0;
+    top: 50%;
     left: 50%;
-    width: 48px;
-    height: 48px;
-    padding: 0;
-    border-radius: 50%;
-    font-size: 23px;
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
     cursor: grab;
-    pointer-events: auto;
     touch-action: none;
-    transform: translateX(-50%);
-    transition: transform 160ms ease, background-color 160ms ease;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-theme-widget-toggle:active {
@@ -50,10 +52,7 @@
 
 .kodann-theme-widget-panel {
     position: absolute;
-    right: 0;
-    bottom: 47px;
-    left: 0;
-    height: 144px;
+    inset: 0;
     pointer-events: none;
 }
 
@@ -63,83 +62,80 @@
 
 .kodann-theme-widget-action,
 .kodann-theme-widget-theme-picker {
-    position: absolute;
-    display: grid;
-    width: 44px;
-    height: 40px;
-    place-items: center;
-    padding: 0;
-    border-radius: 13px 13px 9px 9px;
-    font-size: 20px;
+    width: 27px;
+    height: 27px;
+    font-size: 13px;
     line-height: 1;
-    pointer-events: auto;
-    transition: transform 140ms ease, background-color 140ms ease;
 }
 
 .kodann-theme-widget-default {
-    top: 91px;
-    left: 3px;
-    transform: rotate(-28deg);
+    top: 10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-theme-widget-previous {
-    top: 40px;
-    left: 45px;
-    transform: rotate(-16deg);
+    top: 25%;
+    left: 86%;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-theme-widget-theme-picker {
-    top: 5px;
-    left: 103px;
+    top: 75%;
+    left: 86%;
     cursor: pointer;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-theme-widget-next {
-    top: 40px;
-    left: 161px;
-    transform: rotate(16deg);
+    top: 90%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-theme-widget-mode {
-    top: 91px;
-    left: 203px;
-    transform: rotate(28deg);
+    top: 25%;
+    left: 14%;
+    transform: translate(-50%, -50%);
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(1) {
-    top: 91px;
-    left: 3px;
-    transform: rotate(-28deg);
+    top: 10%;
+    left: 50%;
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(2) {
-    top: 48px;
-    left: 39px;
-    transform: rotate(-20deg);
+    top: 25%;
+    left: 86%;
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(3) {
-    top: 15px;
-    left: 79px;
-    transform: rotate(-10deg);
+    top: 75%;
+    left: 86%;
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(4) {
-    top: 15px;
-    left: 127px;
-    transform: rotate(10deg);
+    top: 90%;
+    left: 50%;
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(5) {
-    top: 48px;
-    left: 167px;
-    transform: rotate(20deg);
+    top: 75%;
+    left: 14%;
 }
 
 .kodann-utility-widget-panel .kodann-utility-widget-action:nth-child(6) {
-    top: 91px;
-    left: 203px;
-    transform: rotate(28deg);
+    top: 25%;
+    left: 14%;
+}
+
+.kodann-utility-widget-action {
+    transform: translate(-50%, -50%);
+}
+
+.kodann-utility-widget-action svg {
+    width: 14px;
+    height: 14px;
 }
 
 .kodann-theme-widget-theme-picker select {
@@ -157,13 +153,9 @@
     background: var(--background-modifier-hover);
 }
 
-.kodann-theme-widget-action:hover {
-    transform: translateY(-3px) rotate(0deg);
-}
-
-.kodann-utility-widget-action svg {
-    width: 18px;
-    height: 18px;
+.kodann-theme-widget-action:hover,
+.kodann-theme-widget-theme-picker:hover {
+    transform: translate(-50%, -50%) scale(1.12);
 }
 
 .kodann-theme-widget-toggle:focus-visible,
