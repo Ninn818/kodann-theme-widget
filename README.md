@@ -30,14 +30,6 @@ Copy `main.js`, `manifest.json`, and `styles.css` into:
 
 Then enable **Kodann Theme Widget** in Obsidian's Community plugins settings. For local development, this repository itself can be used as that plugin folder.
 
-## Build from source
-
-Requirements: Node.js and npm.
-
-```sh
-npm install
-npm run build
-```
 
 The build type-checks the TypeScript in `src/` and bundles the plugin into `main.js`. Restart or reload the plugin in Obsidian after rebuilding.
 
