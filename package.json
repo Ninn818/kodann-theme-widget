@@ -1,6 +1,6 @@
 {
   "name": "kodann-theme-widget",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "scripts": {
     "build": "tsc --noEmit && esbuild src/main.ts --bundle --external:obsidian --format=cjs --target=es2018 --outfile=main.js"
