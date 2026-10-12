@@ -124,36 +124,30 @@ var AppearanceWidget = class {
     this.toggleButton.textContent = "\u25D0";
     this.toggleButton.title = "Drag to move; click to open";
     this.toggleButton.setAttribute("aria-label", "Open appearance controls");
-    const defaultButton = this.createAction(
-      "\u2302",
-      "Use Obsidian default theme",
-      () => this.setTheme("")
-    );
-    defaultButton.classList.add("kodann-theme-widget-default");
-    const previousButton = this.createAction(
-      "\u2039",
-      "Previous theme",
-      () => this.cycleTheme(-1)
-    );
-    previousButton.classList.add("kodann-theme-widget-previous");
     const picker = document.createElement("div");
     picker.className = "kodann-theme-widget-theme-picker";
-    picker.textContent = "\u25C9";
-    picker.setAttribute("aria-hidden", "true");
+    picker.title = "Choose Obsidian theme";
+    const pickerIcon = document.createElement("span");
+    pickerIcon.textContent = "\u25C9";
+    pickerIcon.setAttribute("aria-hidden", "true");
     this.themeSelect = document.createElement("select");
     this.themeSelect.className = "kodann-theme-widget-theme";
     this.themeSelect.setAttribute("aria-label", "Choose Obsidian theme");
     this.themeSelect.addEventListener("change", () => void this.setTheme(this.themeSelect.value));
-    picker.append(this.themeSelect);
-    const nextButton = this.createAction("\u203A", "Next theme", () => this.cycleTheme(1));
-    nextButton.classList.add("kodann-theme-widget-next");
+    picker.append(pickerIcon, this.themeSelect);
     this.modeButton = this.createAction(
       "\u263C",
       "Switch appearance mode",
       () => this.toggleMode()
     );
     this.modeButton.classList.add("kodann-theme-widget-mode");
-    this.panel.append(defaultButton, previousButton, picker, nextButton, this.modeButton);
+    const styleSettingsButton = this.createAction(
+      "\u2699",
+      "Open Style Settings",
+      () => this.openStyleSettings()
+    );
+    styleSettingsButton.classList.add("kodann-theme-widget-style-settings");
+    this.panel.append(this.modeButton, picker, styleSettingsButton);
     this.element.append(this.panel, this.toggleButton);
     document.body.append(this.element);
     this.drag = new WidgetDragController(this.element, this.toggleButton, savePosition);
@@ -173,6 +167,12 @@ var AppearanceWidget = class {
     document.removeEventListener("click", this.handleOutsideClick);
     this.drag.dispose();
     this.element.remove();
+  }
+  resetPosition() {
+    this.element.style.removeProperty("left");
+    this.element.style.removeProperty("top");
+    this.element.style.removeProperty("right");
+    this.element.style.removeProperty("bottom");
   }
   createAction(icon, label, action) {
     const button = document.createElement("button");
@@ -195,7 +195,10 @@ var AppearanceWidget = class {
     return Array.isArray(installed) ? [...installed] : Object.keys(installed);
   }
   refreshThemes() {
-    const active = this.app.customCss.enabledTheme || "";
+    var _a, _b, _c;
+    const activeFromObsidian = this.app.customCss.enabledTheme;
+    (_a = this.selectedTheme) != null ? _a : this.selectedTheme = activeFromObsidian != null ? activeFromObsidian : "";
+    const active = (_c = (_b = this.selectedTheme) != null ? _b : activeFromObsidian) != null ? _c : "";
     const themes = this.themes();
     if (active && !themes.includes(active)) themes.push(active);
     this.themeSelect.replaceChildren();
@@ -216,6 +219,7 @@ var AppearanceWidget = class {
     this.themeSelect.disabled = true;
     try {
       await this.app.customCss.setTheme(name);
+      this.selectedTheme = name;
     } catch (error) {
       console.error("Failed to switch Obsidian theme.", error);
       new import_obsidian3.Notice("Could not switch theme.");
@@ -224,12 +228,9 @@ var AppearanceWidget = class {
       this.update();
     }
   }
-  cycleTheme(direction) {
-    const active = this.app.customCss.enabledTheme || "";
-    const themes = ["", ...this.themes()];
-    if (active && !themes.includes(active)) themes.push(active);
-    const index = themes.indexOf(active);
-    void this.setTheme(themes[(index + direction + themes.length) % themes.length]);
+  openStyleSettings() {
+    this.app.setting.open();
+    this.app.setting.openTabById("obsidian-style-settings");
   }
   toggleMode() {
     const success = this.app.commands.executeCommandById("theme:toggle-light-dark") || this.app.commands.executeCommandById("app:toggle-light-dark");
@@ -330,6 +331,12 @@ var UtilityWidget = class {
     this.drag.dispose();
     this.element.remove();
   }
+  resetPosition() {
+    this.element.style.removeProperty("left");
+    this.element.style.removeProperty("top");
+    this.element.style.removeProperty("right");
+    this.element.style.removeProperty("bottom");
+  }
   createAction(icon, label, action) {
     const button = document.createElement("button");
     button.className = "kodann-theme-widget-action kodann-utility-widget-action";
@@ -417,6 +424,11 @@ var KodannThemeWidget = class extends import_obsidian6.Plugin {
   async onload() {
     await this.loadSettings();
     this.addSettingTab(new KodannThemeWidgetSettingTab(this.app, this));
+    this.addCommand({
+      id: "reset-widget-positions",
+      name: "Reset widget positions",
+      callback: () => void this.resetWidgetPositions()
+    });
     this.app.workspace.onLayoutReady(() => {
       this.layoutReady = true;
       this.syncWidgets();
@@ -446,6 +458,25 @@ var KodannThemeWidget = class extends import_obsidian6.Plugin {
   async setUtilityWidgetEnabled(enabled) {
     await this.updateSetting("utilityWidgetEnabled", enabled);
     if (this.layoutReady) this.syncUtilityWidget();
+  }
+  async resetWidgetPositions() {
+    var _a, _b;
+    const previousAppearancePosition = this.settings.widgetPosition;
+    const previousUtilityPosition = this.settings.utilityWidgetPosition;
+    this.settings.widgetPosition = null;
+    this.settings.utilityWidgetPosition = null;
+    try {
+      await this.saveSettings();
+    } catch (error) {
+      this.settings.widgetPosition = previousAppearancePosition;
+      this.settings.utilityWidgetPosition = previousUtilityPosition;
+      console.error("Failed to reset widget positions.", error);
+      new import_obsidian6.Notice("Could not reset widget positions.");
+      return;
+    }
+    (_a = this.appearanceWidget) == null ? void 0 : _a.resetPosition();
+    (_b = this.utilityWidget) == null ? void 0 : _b.resetPosition();
+    new import_obsidian6.Notice("Widget positions reset.");
   }
   async updateSetting(key, value) {
     const previousValue = this.settings[key];

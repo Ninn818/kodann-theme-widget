@@ -1,4 +1,4 @@
-import { Plugin } from "obsidian";
+import { Notice, Plugin } from "obsidian";
 import { AppearanceWidget } from "./appearance-widget";
 import { UtilityWidget } from "./utility-widget";
 import {
@@ -18,6 +18,11 @@ export default class KodannThemeWidget extends Plugin {
     async onload(): Promise<void> {
         await this.loadSettings();
         this.addSettingTab(new KodannThemeWidgetSettingTab(this.app, this));
+        this.addCommand({
+            id: "reset-widget-positions",
+            name: "Reset widget positions",
+            callback: () => void this.resetWidgetPositions(),
+        });
         this.app.workspace.onLayoutReady(() => {
             this.layoutReady = true;
             this.syncWidgets();
@@ -51,6 +56,26 @@ export default class KodannThemeWidget extends Plugin {
     async setUtilityWidgetEnabled(enabled: boolean): Promise<void> {
         await this.updateSetting("utilityWidgetEnabled", enabled);
         if (this.layoutReady) this.syncUtilityWidget();
+    }
+
+    private async resetWidgetPositions(): Promise<void> {
+        const previousAppearancePosition = this.settings.widgetPosition;
+        const previousUtilityPosition = this.settings.utilityWidgetPosition;
+        this.settings.widgetPosition = null;
+        this.settings.utilityWidgetPosition = null;
+        try {
+            await this.saveSettings();
+        } catch (error) {
+            this.settings.widgetPosition = previousAppearancePosition;
+            this.settings.utilityWidgetPosition = previousUtilityPosition;
+            console.error("Failed to reset widget positions.", error);
+            new Notice("Could not reset widget positions.");
+            return;
+        }
+
+        this.appearanceWidget?.resetPosition();
+        this.utilityWidget?.resetPosition();
+        new Notice("Widget positions reset.");
     }
 
     private async updateSetting(

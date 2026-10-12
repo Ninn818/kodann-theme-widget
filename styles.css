@@ -68,34 +68,22 @@
     line-height: 1;
 }
 
-.kodann-theme-widget-default {
+.kodann-theme-widget-theme-picker {
+    top: 50%;
+    left: 14%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+}
+
+.kodann-theme-widget-mode {
     top: 10%;
     left: 50%;
     transform: translate(-50%, -50%);
 }
 
-.kodann-theme-widget-previous {
-    top: 25%;
+.kodann-theme-widget-style-settings {
+    top: 50%;
     left: 86%;
-    transform: translate(-50%, -50%);
-}
-
-.kodann-theme-widget-theme-picker {
-    top: 75%;
-    left: 86%;
-    cursor: pointer;
-    transform: translate(-50%, -50%);
-}
-
-.kodann-theme-widget-next {
-    top: 90%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.kodann-theme-widget-mode {
-    top: 25%;
-    left: 14%;
     transform: translate(-50%, -50%);
 }
 

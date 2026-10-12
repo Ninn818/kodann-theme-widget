@@ -10,6 +10,7 @@ export class AppearanceWidget {
     private panel: HTMLDivElement;
     private toggleButton: HTMLButtonElement;
     private themeSelect: HTMLSelectElement;
+    private selectedTheme?: string;
     private modeButton: HTMLButtonElement;
     private drag: WidgetDragController;
     private handleOutsideClick = (event: MouseEvent): void => {
@@ -36,33 +37,28 @@ export class AppearanceWidget {
         this.toggleButton.title = "Drag to move; click to open";
         this.toggleButton.setAttribute("aria-label", "Open appearance controls");
 
-        const defaultButton = this.createAction("⌂", "Use Obsidian default theme", () =>
-            this.setTheme(""),
-        );
-        defaultButton.classList.add("kodann-theme-widget-default");
-        const previousButton = this.createAction("‹", "Previous theme", () =>
-            this.cycleTheme(-1),
-        );
-        previousButton.classList.add("kodann-theme-widget-previous");
-
         const picker = document.createElement("div");
         picker.className = "kodann-theme-widget-theme-picker";
-        picker.textContent = "◉";
-        picker.setAttribute("aria-hidden", "true");
+        picker.title = "Choose Obsidian theme";
+        const pickerIcon = document.createElement("span");
+        pickerIcon.textContent = "◉";
+        pickerIcon.setAttribute("aria-hidden", "true");
         this.themeSelect = document.createElement("select");
         this.themeSelect.className = "kodann-theme-widget-theme";
         this.themeSelect.setAttribute("aria-label", "Choose Obsidian theme");
         this.themeSelect.addEventListener("change", () => void this.setTheme(this.themeSelect.value));
-        picker.append(this.themeSelect);
+        picker.append(pickerIcon, this.themeSelect);
 
-        const nextButton = this.createAction("›", "Next theme", () => this.cycleTheme(1));
-        nextButton.classList.add("kodann-theme-widget-next");
         this.modeButton = this.createAction("☼", "Switch appearance mode", () =>
             this.toggleMode(),
         );
         this.modeButton.classList.add("kodann-theme-widget-mode");
+        const styleSettingsButton = this.createAction("⚙", "Open Style Settings", () =>
+            this.openStyleSettings(),
+        );
+        styleSettingsButton.classList.add("kodann-theme-widget-style-settings");
 
-        this.panel.append(defaultButton, previousButton, picker, nextButton, this.modeButton);
+        this.panel.append(this.modeButton, picker, styleSettingsButton);
         this.element.append(this.panel, this.toggleButton);
         document.body.append(this.element);
         this.drag = new WidgetDragController(this.element, this.toggleButton, savePosition);
@@ -84,6 +80,13 @@ export class AppearanceWidget {
         document.removeEventListener("click", this.handleOutsideClick);
         this.drag.dispose();
         this.element.remove();
+    }
+
+    resetPosition(): void {
+        this.element.style.removeProperty("left");
+        this.element.style.removeProperty("top");
+        this.element.style.removeProperty("right");
+        this.element.style.removeProperty("bottom");
     }
 
     private createAction(icon: string, label: string, action: () => void): HTMLButtonElement {
@@ -110,7 +113,9 @@ export class AppearanceWidget {
     }
 
     private refreshThemes(): void {
-        const active = this.app.customCss.enabledTheme || "";
+        const activeFromObsidian = this.app.customCss.enabledTheme;
+        this.selectedTheme ??= activeFromObsidian ?? "";
+        const active = this.selectedTheme ?? activeFromObsidian ?? "";
         const themes = this.themes();
         if (active && !themes.includes(active)) themes.push(active);
         this.themeSelect.replaceChildren();
@@ -132,6 +137,7 @@ export class AppearanceWidget {
         this.themeSelect.disabled = true;
         try {
             await this.app.customCss.setTheme(name);
+            this.selectedTheme = name;
         } catch (error) {
             console.error("Failed to switch Obsidian theme.", error);
             new Notice("Could not switch theme.");
@@ -141,12 +147,9 @@ export class AppearanceWidget {
         }
     }
 
-    private cycleTheme(direction: -1 | 1): void {
-        const active = this.app.customCss.enabledTheme || "";
-        const themes = ["", ...this.themes()];
-        if (active && !themes.includes(active)) themes.push(active);
-        const index = themes.indexOf(active);
-        void this.setTheme(themes[(index + direction + themes.length) % themes.length]);
+    private openStyleSettings(): void {
+        this.app.setting.open();
+        this.app.setting.openTabById("obsidian-style-settings");
     }
 
     private toggleMode(): void {

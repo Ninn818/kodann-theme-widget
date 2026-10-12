@@ -83,6 +83,13 @@ export class UtilityWidget {
         this.element.remove();
     }
 
+    resetPosition(): void {
+        this.element.style.removeProperty("left");
+        this.element.style.removeProperty("top");
+        this.element.style.removeProperty("right");
+        this.element.style.removeProperty("bottom");
+    }
+
     private createAction(icon: string, label: string, action: () => void): HTMLButtonElement {
         const button = document.createElement("button");
         button.className = "kodann-theme-widget-action kodann-utility-widget-action";
