@@ -1,7 +1,7 @@
 {
   "id": "kodann-theme-widget",
   "name": "Kodann Theme Widget",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "minAppVersion": "1.6.0",
   "description": "A floating widget for switching light/dark mode and installed Obsidian themes.",
   "author": "Ninn818",
