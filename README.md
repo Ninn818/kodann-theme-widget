@@ -60,7 +60,7 @@ Both toggles are saved safely; if saving fails, the toggle is reverted and an er
 
 ### Commands
 
-From Obsidian's command palette:
+Use the dashboard icon in the left ribbon or run this from Obsidian's command palette:
 
 - **Kodann Theme Widget: Reset widget positions**
   - Clears saved positions for both widgets.

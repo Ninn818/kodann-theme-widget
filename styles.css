@@ -9,8 +9,7 @@
 }
 
 .kodann-utility-widget {
-    right: auto;
-    left: 18px;
+    top: calc(80% - 50px);
 }
 
 .kodann-theme-widget button,

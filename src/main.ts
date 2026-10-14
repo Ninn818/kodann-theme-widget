@@ -23,6 +23,11 @@ export default class KodannThemeWidget extends Plugin {
             name: "Reset widget positions",
             callback: () => void this.resetWidgetPositions(),
         });
+        this.addRibbonIcon(
+            "rotate-ccw",
+            "Reset widget positions",
+            () => void this.resetWidgetPositions(),
+        );
         this.app.workspace.onLayoutReady(() => {
             this.layoutReady = true;
             this.syncWidgets();

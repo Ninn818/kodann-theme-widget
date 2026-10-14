@@ -429,6 +429,11 @@ var KodannThemeWidget = class extends import_obsidian6.Plugin {
       name: "Reset widget positions",
       callback: () => void this.resetWidgetPositions()
     });
+    this.addRibbonIcon(
+      "layout-dashboard",
+      "Reset widget positions",
+      () => void this.resetWidgetPositions()
+    );
     this.app.workspace.onLayoutReady(() => {
       this.layoutReady = true;
       this.syncWidgets();
